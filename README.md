@@ -1,2 +1,4 @@
-# Pepino
-**For further information see the Pepino [Wiki](http://www.saanlima.com/pepino/index.php?title=Welcome_to_Pepino).**
+Snake game for VGA1306
+=======================
+
+This is a port of the Snake game first posted at http://www.instructables.com/id/Snake-on-an-FPGA-Verilog/

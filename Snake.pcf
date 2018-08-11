@@ -1,0 +1,11 @@
+set_io left      51
+set_io down      52
+set_io right     53
+set_io up        54
+# set_io start   56
+set_io VGA_R     25
+set_io VGA_G     24
+set_io VGA_B     20
+set_io VGA_hSync 19
+set_io VGA_vSync 18
+set_io VGA_clk   15
