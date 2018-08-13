@@ -3,8 +3,8 @@
 // See http://www.instructables.com/id/Snake-on-an-FPGA-Verilog/ for info about the original project
 
 module Snake(VGA_clk, VGA_R, VGA_G, VGA_B, VGA_hSync, VGA_vSync,
-             left, right, up, down);
-  input left, right, up, down;
+             up, left, down, right);
+  input up, left, down, right;
   input VGA_clk; //25 MHz
   output VGA_R;
   output VGA_G;
@@ -18,11 +18,11 @@ module Snake(VGA_clk, VGA_R, VGA_G, VGA_B, VGA_hSync, VGA_vSync,
   wire [9:0] yCount; //y pixel
 
   wire displayArea; //is it in the active display area?
-  reg [3:0] direction;
-  assign direction[0] = left;
-  assign direction[1] = right;
-  assign direction[2] = up;
-  assign direction[3] = down;
+  wire [3:0] direction;
+  assign direction[0] = up;
+  assign direction[1] = left;
+  assign direction[2] = down;
+  assign direction[3] = right;
   reg game_over = 1'b1;
   reg apple, border;
   reg [4:0] size;
@@ -50,7 +50,7 @@ module Snake(VGA_clk, VGA_R, VGA_G, VGA_B, VGA_hSync, VGA_vSync,
           snakeY[count] <= 127;
         end
       size <= 1;
-      game_over <= 0;
+      if (update) game_over <= 0; // flash red 'death' screen
     end else if (~game_over) begin
       if (update) begin
         for(count = 1; count < 32; count = count + 1)
@@ -62,22 +62,25 @@ module Snake(VGA_clk, VGA_R, VGA_G, VGA_B, VGA_hSync, VGA_vSync,
             end
           end
         case(direction)
-          4'b1110: snakeY[0] <= (snakeY[0] - 1);
-          4'b1101: snakeX[0] <= (snakeX[0] - 1);
-          4'b1011: snakeY[0] <= (snakeY[0] + 1);
-          4'b0111: snakeX[0] <= (snakeX[0] + 1);
+          4'b1110: snakeY[0] <= (snakeY[0] - 1); // Up
+          4'b1101: snakeX[0] <= (snakeX[0] - 1); // Left
+          4'b1011: snakeY[0] <= (snakeY[0] + 1); // Down
+          4'b0111: snakeX[0] <= (snakeX[0] + 1); // Right
         endcase
       end else begin
         // Detect if snake head hit the apple
         if ((snakeX[0] == appleX) && (snakeY[0] == appleY)) begin
-          appleX <= xCount[5:0] + direction[2:0];
-          appleY <= yCount[4:0] + direction;
+          appleX <= xCount[5:0] + direction[2:0]; // rand_X
+          appleY <= yCount[4:0] + direction;      // rand_Y
           if (size < 32 - SIZE_INCREASE)
             size <= size + SIZE_INCREASE;
         end
         // Detect if snake head hit border
         else if ((snakeX[0] == 0) || (snakeX[0] == 79) || (snakeY[0] == 0) || (snakeY[0] == 59))
+        begin
           game_over <= 1'b1;
+          size <= 0;
+        end
         /* Detect if snake head hit the snake body
         else if (|snakeBody[31:1] && snakeBody[0])
           game_over <= 1'b1; */
@@ -118,7 +121,7 @@ endmodule
 module VGA_gen(VGA_clk, xCount, yCount, displayArea, VGA_hSync, VGA_vSync);
 
   input VGA_clk;
-  output reg [9:0]xCount, yCount;
+  output reg [9:0] xCount, yCount;
   output reg displayArea;
   output VGA_hSync, VGA_vSync;
 

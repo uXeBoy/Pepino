@@ -1,7 +1,7 @@
-set_io left      51
-set_io down      52
-set_io right     53
-set_io up        54
+set_io up        51
+set_io left      52
+set_io down      53
+set_io right     54
 # set_io start   56
 set_io VGA_R     25
 set_io VGA_G     24
