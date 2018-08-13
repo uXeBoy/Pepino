@@ -77,10 +77,7 @@ module Snake(VGA_clk, VGA_R, VGA_G, VGA_B, VGA_hSync, VGA_vSync,
         end
         // Detect if snake head hit border
         else if ((snakeX[0] == 0) || (snakeX[0] == 79) || (snakeY[0] == 0) || (snakeY[0] == 59))
-        begin
           game_over <= 1'b1;
-          size <= 0;
-        end
         /* Detect if snake head hit the snake body
         else if (|snakeBody[31:1] && snakeBody[0])
           game_over <= 1'b1; */
